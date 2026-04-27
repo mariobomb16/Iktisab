@@ -1,0 +1,78 @@
+  {% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Dashboard <span class="ar-sub">لوحة التحكم</span></h1>
+    <p>Welcome, <strong>{{ session.get('username') }}</strong>
+        {% if session.get('role') == 'admin' %}
+            <span class="role-badge admin">Admin</span>
+        {% else %}
+            <span class="role-badge user">Student</span>
+        {% endif %}
+    </p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">{{ vocab_count }}</div>
+        <div class="stat-label">Vocabulary Words</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ doc_count }}</div>
+        <div class="stat-label">Resources Available</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number">{{ scores | length }}</div>
+        <div class="stat-label">Recent Games Played</div>
+    </div>
+</div>
+
+<div class="dashboard-actions">
+    <h2>Quick Actions</h2>
+    <div class="action-grid">
+        <a href="{{ url_for('flashcards') }}" class="action-card">
+            <span>🃏</span>
+            <p>Play Flashcards</p>
+        </a>
+        <a href="{{ url_for('resources') }}" class="action-card">
+            <span>📁</span>
+            <p>Browse Resources</p>
+        </a>
+        <a href="{{ url_for('leaderboard') }}" class="action-card">
+            <span>🏆</span>
+            <p>Leaderboard</p>
+        </a>
+        {% if session.get('role') == 'admin' %}
+        <a href="{{ url_for('upload') }}" class="action-card admin-action">
+            <span>📤</span>
+            <p>Upload Resource</p>
+        </a>
+        <a href="{{ url_for('manage_vocab') }}" class="action-card admin-action">
+            <span>✏️</span>
+            <p>Manage Vocabulary</p>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="recent-scores">
+    <h2>Your Recent Scores</h2>
+    {% if scores %}
+    <table class="data-table">
+        <thead>
+            <tr><th>Score</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+            {% for s in scores %}
+            <tr>
+                <td><span class="score-chip">{{ s['score'] }}/10</span></td>
+                <td>{{ s['date'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-msg">No scores yet. <a href="{{ url_for('flashcards') }}">Play flashcards</a> to get started!</p>
+    {% endif %}
+</div>
+{% endblock %}

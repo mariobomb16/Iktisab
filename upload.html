@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Upload Resource{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Upload Resource <span class="ar-sub">رفع ملف</span></h1>
+    <p>Admin only: Upload study materials for students.</p>
+</div>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Choose File (PDF, DOCX, etc.)</label>
+                <input type="file" id="file" name="file" required class="file-input" accept=".pdf">
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Upload File</button>
+        </form>
+        <p class="auth-link"><a href="{{ url_for('resources') }}">← Back to Resources</a></p>
+    </div>
+</div>
+{% endblock %}

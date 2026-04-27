@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block title %}Flashcards{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Flashcards <span class="ar-sub">البطاقات التعليمية</span></h1>
+</div>
+
+<div class="theme-filter">
+    <form method="GET" action="{{ url_for('flashcards') }}">
+        <label for="theme">Filter by Theme:</label>
+        <select name="theme" id="theme" onchange="this.form.submit()">
+            {% for t in themes %}
+            <option value="{{ t }}" {% if t == selected_theme %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+
+{% if cards %}
+<div class="game-container">
+    <div class="game-stats">
+        <span>Card: <strong id="current-card">1</strong> / <strong>{{ cards|length }}</strong></span>
+        <span>Score: <strong id="score-display">0</strong></span>
+    </div>
+
+    <div class="flashcard-wrapper">
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+            <div class="card-front">
+                <div class="card-lang">Arabic العربية</div>
+                <div class="card-word" id="word-ar">{{ cards[0].word_ar }}</div>
+                <div class="card-hint">Click to reveal translation</div>
+            </div>
+            <div class="card-back" id="card-back">
+                <div class="card-lang">English</div>
+                <div class="card-word" id="word-en">{{ cards[0].word_en }}</div>
+                <div class="card-theme">Theme: {{ cards[0].theme }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="answer-buttons" id="answer-buttons" style="display:none;">
+        <button onclick="markAnswer(true)" class="btn btn-correct">✓ I knew it</button>
+        <button onclick="markAnswer(false)" class="btn btn-wrong">✗ I didn't know</button>
+    </div>
+
+    <div class="game-result" id="game-result" style="display:none;">
+        <h2>Game Over! <span class="ar-sub">انتهت اللعبة</span></h2>
+        <p class="final-score">Your score: <strong id="final-score">0</strong> / 10</p>
+        <p id="result-message"></p>
+        <button onclick="saveScore()" class="btn btn-primary" id="save-btn">Save Score</button>
+        <a href="{{ url_for('flashcards') }}" class="btn btn-secondary">Play Again</a>
+    </div>
+</div>
+
+<script>
+const cards = {{ cards | tojson }};
+let currentIndex = 0;
+let score = 0;
+let flipped = false;
+
+function flipCard() {
+    const card = document.getElementById('flashcard');
+    if (!flipped) {
+        card.classList.add('flipped');
+        document.getElementById('answer-buttons').style.display = 'flex';
+        flipped = true;
+    }
+}
+
+function markAnswer(correct) {
+    if (correct) {
+        score++;
+        document.getElementById('score-display').textContent = score;
+    }
+    nextCard();
+}
+
+function nextCard() {
+    currentIndex++;
+    if (currentIndex >= cards.length) {
+        showResult();
+        return;
+    }
+    const card = document.getElementById('flashcard');
+    card.classList.remove('flipped');
+    document.getElementById('answer-buttons').style.display = 'none';
+    flipped = false;
+
+    setTimeout(() => {
+        document.getElementById('word-ar').textContent = cards[currentIndex].word_ar;
+        document.getElementById('word-en').textContent = cards[currentIndex].word_en;
+        document.getElementById('card-back').querySelector('.card-theme').textContent = 'Theme: ' + cards[currentIndex].theme;
+        document.getElementById('current-card').textContent = currentIndex + 1;
+    }, 300);
+}
+
+function showResult() {
+    document.querySelector('.flashcard-wrapper').style.display = 'none';
+    document.getElementById('answer-buttons').style.display = 'none';
+    document.getElementById('game-result').style.display = 'block';
+    document.getElementById('final-score').textContent = score;
+    const messages = ['Keep practicing! – استمر في التدريب', 'Good effort! – جهد جيد', 'Well done! – أحسنت', 'Excellent! – ممتاز', 'Perfect! – مثالي'];
+    const msgIndex = Math.floor((score / cards.length) * (messages.length - 1));
+    document.getElementById('result-message').textContent = messages[msgIndex];
+}
+
+function saveScore() {
+    document.getElementById('save-btn').disabled = true;
+    fetch('/save_score', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({score: score})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            document.getElementById('save-btn').textContent = '✓ Score Saved!';
+        }
+    });
+}
+</script>
+{% else %}
+<p class="empty-msg">No vocabulary found for this theme. Ask your teacher to add words.</p>
+{% endif %}
+{% endblock %}

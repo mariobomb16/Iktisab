@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Resources{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Resources <span class="ar-sub">الموارد</span></h1>
+    <p>Download IB Arabic B study materials and exam guides.</p>
+</div>
+
+{% if session.get('role') == 'admin' %}
+<div class="admin-notice">
+    <p>Admin: <a href="{{ url_for('upload') }}">Upload a new resource →</a></p>
+</div>
+{% endif %}
+
+{% if docs %}
+<div class="resource-grid">
+    {% for doc in docs %}
+    <div class="resource-card">
+        <div class="resource-icon">📄</div>
+        <div class="resource-info">
+            <h3>{{ doc['file_name'] }}</h3>
+        </div>
+        <a href="{{ url_for('download', doc_id=doc['doc_id']) }}" class="btn btn-download">Download</a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p class="empty-msg">No resources uploaded yet. Check back soon!</p>
+    <p class="empty-ar">لم يتم رفع أي ملفات بعد</p>
+</div>
+{% endif %}
+{% endblock %}

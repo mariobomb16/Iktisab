@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Manage Vocabulary{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Manage Vocabulary <span class="ar-sub">إدارة المفردات</span></h1>
+</div>
+
+<div class="admin-section">
+    <h2>Add New Word</h2>
+    <form method="POST" class="inline-form">
+        <input type="hidden" name="action" value="add">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Arabic Word</label>
+                <input type="text" name="word_ar" required placeholder="e.g. الكتاب" dir="rtl">
+            </div>
+            <div class="form-group">
+                <label>English Translation</label>
+                <input type="text" name="word_en" required placeholder="e.g. Book">
+            </div>
+            <div class="form-group">
+                <label>Theme</label>
+                <select name="theme" required>
+                    <option value="Identity">Identity</option>
+                    <option value="Education">Education</option>
+                    <option value="Environment">Environment</option>
+                    <option value="Health">Health</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Work">Work</option>
+                    <option value="Culture">Culture</option>
+                    <option value="Society">Society</option>
+                    <option value="Leisure">Leisure</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Word</button>
+        </div>
+    </form>
+</div>
+
+<div class="vocab-table-section">
+    <h2>Current Vocabulary ({{ words | length }} words)</h2>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Arabic</th>
+                <th>English</th>
+                <th>Theme</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for w in words %}
+            <tr>
+                <td class="ar-text">{{ w['word_ar'] }}</td>
+                <td>{{ w['word_en'] }}</td>
+                <td><span class="theme-tag">{{ w['theme'] }}</span></td>
+                <td>
+                    <form method="POST" style="display:inline;">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="word_id" value="{{ w['id'] }}">
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Delete this word?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

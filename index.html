@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title-ar">اكتساب</h1>
+        <h2 class="hero-title-en">Iktisab</h2>
+        <p class="hero-subtitle">Your complete guide to IB Arabic B</p>
+        <p class="hero-subtitle-ar">دليلك الشامل لمادة العربية ب في البكالوريا الدولية</p>
+        <div class="hero-buttons">
+            {% if session.get('user_id') %}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+                <a href="{{ url_for('flashcards') }}" class="btn btn-secondary">Practice Flashcards</a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="btn btn-primary">Get Started</a>
+                <a href="{{ url_for('login') }}" class="btn btn-secondary">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <h2 class="section-title">What Iktisab Offers</h2>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">📚</div>
+            <h3>Structured Resources</h3>
+            <p>Access IB Arabic B exam strategies, grammar guides, and topic-based materials uploaded by your teacher.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🃏</div>
+            <h3>Vocabulary Flashcards</h3>
+            <p>Practice Arabic–English vocabulary with an interactive flashcard game organised by IB themes.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🏆</div>
+            <h3>Score Tracking</h3>
+            <p>Your flashcard scores are saved so you can track your progress over time.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Secure Access</h3>
+            <p>Role-based login system keeps admin controls separate from student access.</p>
+        </div>
+    </div>
+</section>
+
+<section class="themes-preview">
+    <h2 class="section-title">IB Arabic B Themes</h2>
+    <div class="themes-grid">
+        <div class="theme-badge">الهوية – Identity</div>
+        <div class="theme-badge">التجارب – Experiences</div>
+        <div class="theme-badge">التعليم – Education</div>
+        <div class="theme-badge">البيئة – Environment</div>
+        <div class="theme-badge">المجتمع – Society</div>
+    </div>
+</section>
+{% endblock %}
